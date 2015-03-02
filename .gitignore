@@ -1,3 +1,6 @@
 BootstrapServer/.idea/*
 BootstrapServer/BootstrapServer.iml
 BootstrapServer/target/*
+P2PNode/.idea/*
+P2PNode/P2PNode.iml
+P2PNode/target/*
