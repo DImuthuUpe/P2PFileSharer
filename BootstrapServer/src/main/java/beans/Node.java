@@ -1,9 +1,10 @@
+package beans;
 
 public class Node {
 	
-	String ip;
-	int port;
-	String username;
+	private String ip;
+	private int port;
+	private String username;
 	
 	public Node(String ip, int port, String username){
 		this.ip = ip;

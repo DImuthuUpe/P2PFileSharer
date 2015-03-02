@@ -5,9 +5,9 @@ import java.net.*;
  */
 public class P2PRegistry {
 	
-	DatagramSocket serverSocket;
-    byte[] receiveData;
-    byte[] sendData;
+	private DatagramSocket serverSocket;
+	private byte[] receiveData;
+	private byte[] sendData;
 	
     public P2PRegistry(){
         try{

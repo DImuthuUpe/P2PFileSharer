@@ -1,7 +1,8 @@
+package beans;
 
 public class TransportAddress {
-	String ip;
-	int port;
+	private String ip;
+	private int port;
 	
 	public TransportAddress(String ip, int port){
 		this.ip = ip;

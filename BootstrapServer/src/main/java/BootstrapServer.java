@@ -2,11 +2,14 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Random;
 
+import beans.Node;
+import beans.TransportAddress;
+
 
 public class BootstrapServer {
 	
-	Hashtable<TransportAddress, Node> nodeTable =  new Hashtable<TransportAddress, Node>();
-	Random random = new Random();
+	private Hashtable<TransportAddress, Node> nodeTable =  new Hashtable<TransportAddress, Node>();
+	private Random random = new Random();
 	
 	
 	public String registerNode(String ip, int port, String uname){
