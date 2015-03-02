@@ -1,38 +1,64 @@
 import java.net.*;
 
 /**
- * Created by dimuthuupeksha on 3/2/15.
+ * Created by dimuthuupeksha & cdwijayarathna on 3/2/15.
  */
 public class P2PRegistry {
-    public static void main(String as[]){
-        new P2PRegistry();
-    }
-
+	
+	DatagramSocket serverSocket;
+    byte[] receiveData;
+    byte[] sendData;
+	
     public P2PRegistry(){
         try{
-            DatagramSocket serverSocket = openSocket(5000);
-            byte[] receiveData = new byte[1024];
-            byte[] sendData = new byte[1024];
-            while(true)
-            {
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                serverSocket.receive(receivePacket);
-                byte data[] = receivePacket.getData();
-                String sentence = new String(data,0,receivePacket.getLength() );
-                System.out.println("RECEIVED: " + sentence);
-                InetAddress IPAddress = receivePacket.getAddress();
-                int port = receivePacket.getPort();
-                System.out.println(port);
-                String capitalizedSentence = sentence.toUpperCase();
-                sendData = capitalizedSentence.getBytes();
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-                serverSocket.send(sendPacket);
-            }
+            serverSocket = openSocket(5000);
+            receiveData = new byte[1024];
+            sendData = new byte[1024];
         }catch(Exception ex){
             ex.printStackTrace();
         }
     }
 
+	public void accept() {
+		
+		BootstrapServer server = new BootstrapServer();
+		String inputData;
+		String[] inputInfo;
+		String output = null;
+		
+		while (true) {
+			try {
+				DatagramPacket receivePacket = new DatagramPacket(receiveData,
+						receiveData.length);
+				serverSocket.receive(receivePacket);
+				byte data[] = receivePacket.getData();
+				inputData = new String(data, 0, receivePacket.getLength());
+				inputInfo = inputData.split(" ");
+				try {
+					if (inputInfo[1].equals("REG")) {
+						output = server.registerNode(inputInfo[2],
+								Integer.parseInt(inputInfo[3].trim()),
+								inputInfo[4]);
+					} else {
+						output = "0015 REGOK 9999";
+					}
+				} catch (Exception e) {
+					output = "0015 REGOK 9999";
+				}
+				
+				InetAddress IPAddress = receivePacket.getAddress();
+				int port = receivePacket.getPort();
+
+				sendData = output.getBytes();
+				DatagramPacket sendPacket = new DatagramPacket(sendData,
+						sendData.length, IPAddress, port);
+				serverSocket.send(sendPacket);
+			} catch (Exception e) {
+
+			}
+		}
+	}
+    
     public DatagramSocket openSocket(int portNo){
         try{
             DatagramSocket serverSocket = new DatagramSocket(portNo,InetAddress.getByName("localhost"));
@@ -48,6 +74,12 @@ public class P2PRegistry {
             System.exit(0);
         }
         return null;
+    }
+    
+    public static void main(String as[]){
+    	P2PRegistry server = new P2PRegistry();
+    	server.accept();
+    	
     }
 
 }
