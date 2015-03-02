@@ -51,12 +51,17 @@ public class BSAck implements Message{
     public boolean initialize(String query) {
         String parts[] = query.split(" ");
         if(parts.length<3){
-            //return false;
+            return false;
         }else{
-            int code = Integer.parseInt(parts[2]);
-            //if((parts.length-3))
+            code = Integer.parseInt(parts[2]);
+            if(code< 9996){
+                nodes = new Node[code];
+                for(int i=0;i<code;i++){
+                    Node node = new Node(parts[3+i*2],Integer.parseInt(parts[4+i*2]),null);
+                    nodes[i] = node;
+                }
+            }
+            return true;
         }
-
-        return false;
     }
 }
