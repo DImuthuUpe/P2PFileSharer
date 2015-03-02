@@ -28,6 +28,7 @@ public class BSAck implements Message{
         String query = "REGOK";
         if(code<=9999 && code>=9996){
             //error code
+            query = query +" "+code;
         }else{
             query =query+" "+code;
             if(nodes!=null){
