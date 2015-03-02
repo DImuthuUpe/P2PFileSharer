@@ -4,23 +4,41 @@ package beans;
  * Created by dimuthuupeksha on 3/2/15.
  */
 public class LeaveAck implements Message{
-    private int value;
+    private int code;
 
-    public int getValue() {
-        return value;
+    public int getCode() {
+        return code;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     @Override
     public String convertToQuery() {
-        return null;
+        String query = "LEAVEOK";
+
+        query =query+" "+ code;
+
+        int queryLength = query.length()+5;
+
+        query = String.format("%04d", queryLength) + " " + query;
+        return query;
     }
 
     @Override
     public boolean initialize(String query) {
-        return false;
+        String parts[] = query.split(" ");
+        if(parts.length<3){
+            return false;
+        }else{
+            try {
+                code = Integer.parseInt(parts[2]);
+            }catch (NumberFormatException e){
+                return false;
+            }
+
+            return true;
+        }
     }
 }

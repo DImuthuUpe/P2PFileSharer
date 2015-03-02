@@ -52,11 +52,43 @@ public class RequestFileAck implements Message{
 
     @Override
     public String convertToQuery() {
-        return null;
+        String query = "SEROK";
+        query =query+" "+fileCount;
+        if(fileCount>0 && fileCount<9998){
+            query += " " + ip + " " + port + " " + hops;
+            if(files!=null){
+                for(int i=0;i<files.length;i++){
+                    query+= " "+files[i];
+                }
+            }
+        }
+
+        int queryLength = query.length()+5;
+
+        query = String.format("%04d", queryLength) + " " + query;
+        return query;
     }
 
     @Override
     public boolean initialize(String query) {
+        String parts[] = query.split(" ");
+        if(parts.length<3){
+            return false;
+        }else if(parts.length>=3 && parts.length<7){
+            fileCount = Integer.parseInt(parts[2]);
+        }else if(parts.length>=7){
+            fileCount = Integer.parseInt(parts[2]);
+            ip = parts[3];
+            port = Integer.parseInt(parts[4]);
+            hops = Integer.parseInt(parts[5]);
+
+            files = new String[fileCount];
+            for (int i=0; i<fileCount; i++){
+                files[i] = parts[i+6];
+            }
+            return true;
+        }
+
         return false;
     }
 }
