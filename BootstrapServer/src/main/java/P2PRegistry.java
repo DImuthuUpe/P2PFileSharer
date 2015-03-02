@@ -1,14 +1,16 @@
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
 
 /**
  * Created by dimuthuupeksha on 3/2/15.
  */
 public class P2PRegistry {
     public static void main(String as[]){
+        new P2PRegistry();
+    }
+
+    public P2PRegistry(){
         try{
-            DatagramSocket serverSocket = new DatagramSocket(5000,InetAddress.getByName("localhost"));
+            DatagramSocket serverSocket = openSocket(5000);
             byte[] receiveData = new byte[1024];
             byte[] sendData = new byte[1024];
             while(true)
@@ -29,6 +31,23 @@ public class P2PRegistry {
         }catch(Exception ex){
             ex.printStackTrace();
         }
+    }
+
+    public DatagramSocket openSocket(int portNo){
+        try{
+            DatagramSocket serverSocket = new DatagramSocket(portNo,InetAddress.getByName("localhost"));
+            System.out.println("Socket created .......");
+            return serverSocket;
+        }catch (UnknownHostException ex){
+            ex.printStackTrace();
+            System.out.println("Could Not fetch the ip to create the socket");
+            System.exit(0);
+        }catch (SocketException ex){
+            ex.printStackTrace();
+            System.out.println("Unable to open socket on port "+portNo);
+            System.exit(0);
+        }
+        return null;
     }
 
 }
