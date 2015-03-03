@@ -12,11 +12,12 @@ import java.util.*;
  */
 public class Controller {
 
-    private int offset = 4;
+    private int offset = 5;
     private Set<TransportAddress> ipTable = new HashSet<TransportAddress>();
     private Node myNode;
     private Communicator communicator;
-    private String[] fileList={"file1_"+offset,"file2_"+offset,"file3_"+offset};
+    private String[] fileList={"file1_"+offset,"file1_"+offset+" hoo","file2_"+offset,"file3_"+offset,};
+    Map<String,Long> searchTable = new HashMap<String, Long>();
 
 
     public Set<TransportAddress> getIpTable() {
@@ -32,7 +33,6 @@ public class Controller {
         }
         return matchingWords;
     }
-
 
 
     public void addToIpTable(Node nodes[]){
@@ -72,15 +72,16 @@ public class Controller {
             TransportAddress self = new TransportAddress(myNode.getIp(),myNode.getPort());
             TransportAddress targets[] = new TransportAddress[ipTable.size()];
             targets = ipTable.toArray(targets);
-            communicator.requestFile(self,self,targets,"file1_2",2);
+
+            String searchQuery="file1_2";
+            Long currentTime = System.currentTimeMillis();
+            searchTable.put(searchQuery,currentTime);
+            communicator.requestFile(self,self,targets,"\""+searchQuery+"\"",2);
 
         }catch (Exception ex){
             ex.printStackTrace();
             System.exit(0);
         }
-
-
-
 
     }
 }

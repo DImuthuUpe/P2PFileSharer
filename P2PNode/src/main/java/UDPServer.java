@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by dimuthuupeksha on 3/2/15.
@@ -55,9 +57,17 @@ public class UDPServer implements Runnable{
         }
     }
 
+    private String[] split(String str){
+        List<String> list = new ArrayList<String>();
+        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(str);
+        while (m.find()){
+            list.add(m.group(1).replaceAll("^\"|\"$", ""));
+        }
+        return list.toArray(new String[list.size()]);
+    }
 
     public Message parseMessage(String message) throws IOException {
-        String parts[] = message.split(" ");
+        String parts[] = split(message);
         if(parts[1].equals("JOIN")){
             //0027 JOIN 64.12.123.190 432
             //Need to add to IP table
@@ -68,13 +78,13 @@ public class UDPServer implements Runnable{
             ack.setCode(0);
             return ack;
         }else if(parts[1].equals("SER")){
-            System.out.println(message);
+            //System.out.println(message);
             String filename = parts[6];
             List<String> matchingWords = controller.getMatchingWords(filename);
             TransportAddress src = new TransportAddress(parts[2],Integer.parseInt(parts[3]));
             int hops = Integer.parseInt(parts[parts.length-1]);
             if(matchingWords.size()>0){ //if there are matching words
-                System.out.println("File found");
+                //System.out.println("File found");
                 Communicator communicator = new Communicator();
                 communicator.responseFile(src,self,matchingWords,hops,filename);
             }else{
@@ -98,7 +108,20 @@ public class UDPServer implements Runnable{
                 communicator.requestFile(self,src,targets,filename,hops);
             }
         }else if(parts[1].equals("SEROK")){
-            System.out.println(message);
+            //0049 SEROK 1 127.0.0.1 3002 hops original "file1_2"
+            //System.out.println(message);
+            String fileName = parts[6];
+            if(controller.searchTable.containsKey(fileName)){
+                Long currentTime = System.currentTimeMillis();
+                Long latency = currentTime - controller.searchTable.get(fileName);
+                controller.searchTable.remove(fileName);
+                System.out.println("File : "+fileName +" is in "+parts[3]+":"+parts[4]);
+                System.out.println("Latency "+latency);
+                System.out.println("File List.....");
+                for (int i=7;i<parts.length;i++){
+                    System.out.println(parts[i]);
+                }
+            }
         }
         return null;
     }
