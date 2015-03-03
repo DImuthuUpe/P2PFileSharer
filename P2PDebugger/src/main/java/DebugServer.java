@@ -1,5 +1,8 @@
 import java.lang.Runnable;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Chamika on 3/3/2015.
@@ -20,6 +23,9 @@ public class DebugServer implements Runnable{
                 serverSocket.receive(receivePacket);
                 byte data[] = receivePacket.getData();
                 String sentence = new String(data,0,receivePacket.getLength() );
+                //This is used to Decompose the input query in to relevant category. 
+                queyDecomposer(sentence);
+
                 System.out.println("RECEIVED: " + sentence);
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
@@ -33,10 +39,6 @@ public class DebugServer implements Runnable{
         }catch(Exception ex){
             ex.printStackTrace();
         }
-    }
-
-    public void parseMessage(String message){
-
     }
 
     public DatagramSocket openSocket(int portNo){
@@ -54,6 +56,26 @@ public class DebugServer implements Runnable{
             System.exit(0);
         }
         return null;
+    }
+
+    public void queyDecomposer(String queryString){
+
+        String[] splittedStrings = queryString.trim().split(" ");
+        List<String> stringList = Arrays.asList(splittedStrings);
+
+        if(stringList.contains("HOPS")){
+            System.out.println("Contains HOPS");
+        }else if(stringList.contains("LATE")){
+            System.out.println("Contains LATE");
+        }else if(stringList.contains("MSGS")) {
+            System.out.println("Contains MSGS");
+        }else if(stringList.contains("DEGS")){
+            System.out.println("Contains DEGS");
+        }else{
+            System.out.println("Not a Valid Query!");
+            //Error Code Return
+        }
+
     }
 
 
