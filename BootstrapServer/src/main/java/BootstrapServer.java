@@ -58,6 +58,7 @@ public class BootstrapServer {
 				returnString = len + returnString;
 			}
 			nodeTable.put(key, value);
+			System.out.println("Registered Node " + ip + ":" +port);
 			return returnString;
 		}
 	}
