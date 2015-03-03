@@ -119,12 +119,14 @@ public class UDPServer implements Runnable{
                 Long currentTime = System.currentTimeMillis();
                 Long latency = currentTime - controller.searchTable.get(fileName);
                 controller.searchTable.remove(fileName);
-                System.out.println("File : "+fileName +" is in "+parts[3]+":"+parts[4]);
-                System.out.println("Latency "+latency);
-                System.out.println("File List.....");
-                for (int i=7;i<parts.length;i++){
-                    System.out.println(parts[i]);
-                }
+                String[] fileList = new String[parts.length-7];
+                System.arraycopy(parts,7,fileList,0,fileList.length);
+                int hops = Integer.parseInt(parts[5]);
+
+                TransportAddress src = new TransportAddress(parts[3],Integer.parseInt(parts[4]));
+                Communicator communicator = new Communicator();
+                communicator.publishResults(self,src,fileName,latency,hops,fileList);
+
             }
 
         }

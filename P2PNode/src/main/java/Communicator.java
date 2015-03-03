@@ -68,6 +68,21 @@ public class Communicator {
         }
     }
 
+    public void publishResults(TransportAddress self,TransportAddress src,String fileName,Long latency,int hops,String[] fileList) throws IOException {
+
+        System.out.println("File : "+fileName +" is in "+src.getIp()+":"+src.getPort());
+        System.out.println("Latency "+latency);
+        System.out.println("File List.....");
+        for (int i=0;i<fileList.length;i++){
+            System.out.println(fileList[i]);
+        }
+
+        if(debug){
+            String query = "LATE "+self.getIp()+" "+self.getPort()+" \""+fileName+"\" "+latency+hops;
+            fireAndForgetQuery(query,debugServer,debugPort);
+        }
+    }
+
     public void responseFile(TransportAddress src,TransportAddress self,List<String> fileList,int hops,String fileName) throws IOException {
         //length SEROK no_files IP port hops original filename1 filename2
         String query = "SEROK "+fileList.size()+" "+self.getIp()+" "+self.getPort()+" "+hops+" \""+fileName+"\"";
