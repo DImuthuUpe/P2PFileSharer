@@ -3,6 +3,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Chamika on 3/3/2015.
@@ -68,21 +70,29 @@ public class DebugServer implements Runnable{
 
     public void queyDecomposer(String queryString){
 
-        String[] splittedStrings = queryString.trim().split(" ");
-        List<String> stringList = Arrays.asList(splittedStrings);
+//        String[] splittedStrings = queryString.trim().split(" ");
+//        List<String> stringList = Arrays.asList(splittedStrings);
+
+       // String[] splittedStrings = queryString.trim().split(" ");
+        List<String> stringList = new ArrayList<String>();
+        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(queryString);
+        while (m.find()) {
+            stringList.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
+        }
 
         if(stringList.contains("INFO")){
 
             System.out.println("Query TYPE : INFO");
             NodeQuery tempNQ = new NodeQuery();
-            tempNQ.setSourceIP(splittedStrings[0]);
-            tempNQ.setSourcePort(Integer.parseInt(splittedStrings[1]));
-            tempNQ.setFileName(splittedStrings[3]);
-            tempNQ.setHops(Integer.parseInt(splittedStrings[4]));
-            tempNQ.setIP(splittedStrings[5]);
-            tempNQ.setPort(Integer.parseInt(splittedStrings[6]));
-            tempNQ.setFileAvaillable(Boolean.parseBoolean(splittedStrings[7]));
-            tempNQ.setNoOfForwardings(Integer.parseInt(splittedStrings[8]));
+            tempNQ.setSourceIP(stringList.get(0));
+            tempNQ.setSourcePort(Integer.parseInt(stringList.get(1)));
+            tempNQ.setFileName(stringList.get(3).replaceAll("^\"|\"$", ""));
+            tempNQ.setHops(Integer.parseInt(stringList.get(4)));
+            tempNQ.setIP(stringList.get(5));
+            tempNQ.setPort(Integer.parseInt(stringList.get(6)));
+            tempNQ.setFileAvaillable(Boolean.parseBoolean(stringList.get(7)));
+            tempNQ.setNoOfForwardings(Integer.parseInt(stringList.get(8)));
+            tempNQ.setNoOfForwardings(Integer.parseInt(stringList.get(8)));
 
             nodeQueryList.add(tempNQ);
 
@@ -92,11 +102,11 @@ public class DebugServer implements Runnable{
 
             System.out.println("Query TYPE : LATE");
             SuccessQuery tempSQ = new SuccessQuery();
-            tempSQ.setSourceIP(splittedStrings[0]);
-            tempSQ.setSourcePort(Integer.parseInt(splittedStrings[1]));
-            tempSQ.setFileName(splittedStrings[3]);
-            tempSQ.setLatency(Double.parseDouble(splittedStrings[4]));
-            tempSQ.setHops(Integer.parseInt(splittedStrings[5]));
+            tempSQ.setSourceIP(stringList.get(0));
+            tempSQ.setSourcePort(Integer.parseInt(stringList.get(1)));
+            tempSQ.setFileName(stringList.get(3).replaceAll("^\"|\"$", ""));
+            tempSQ.setLatency(Double.parseDouble(stringList.get(4)));
+            tempSQ.setHops(Integer.parseInt(stringList.get(5)));
 
             successQueryList.add(tempSQ);
 
@@ -106,6 +116,13 @@ public class DebugServer implements Runnable{
 
             System.out.println("Not a Valid Query!");
             //Error Code Return
+            System.out.println("Success Query List : ");
+            System.out.println(successQueryList);
+            System.out.println("###############################");
+
+            System.out.println("Node Query List : ");
+            System.out.println(nodeQueryList);
+            System.out.println("###############################");
 
         }
 
