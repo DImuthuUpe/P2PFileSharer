@@ -2,6 +2,7 @@ import beans.*;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.List;
 
 /**
  * Created by dimuthuupeksha on 3/2/15.
@@ -17,20 +18,20 @@ public class Communicator {
         int queryLength = query.length()+5;
         query = String.format("%04d", queryLength) + " " + query;
 
-        String newQuery = sendQuery(query,bsServer,bsPort);
+        String newQuery = sendAndReceiveQuery(query, bsServer, bsPort);
         BSAck ack = new BSAck();
         ack.initialize(newQuery);
 
         return ack;
     }
 
-    public JoinAck join(Node self,Node node) throws SocketException,UnknownHostException,IOException{
+    public JoinAck join(Node self,Node node) throws IOException{
 
         String query = "JOIN "+ self.getIp()+" "+self.getPort();
         int queryLength = query.length()+5;
         query = String.format("%04d", queryLength) + " " + query;
 
-        String newQuery = sendQuery(query,node.getIp(),node.getPort());
+        String newQuery = sendAndReceiveQuery(query, node.getIp(), node.getPort());
         JoinAck ack = new JoinAck();
         ack.initialize(newQuery);
         return ack;
@@ -44,15 +45,33 @@ public class Communicator {
         return null;
     }
 
-    public BSAck requestNewNodes(){
-        return null;
+    public void requestFile(TransportAddress self,TransportAddress src, TransportAddress[] targets, String fileName, int hops) throws IOException {
+        //length SER src_ip src_port pred_ip pred_port file_name hops
+        hops --;
+        if(hops>=0){
+            String query = "SER "+src.getIp()+" "+src.getPort()+" "+self.getIp()+" "+self.getPort()+" "+fileName+" "+hops;
+            int queryLength = query.length()+5;
+            query = String.format("%04d", queryLength) + " " + query;
+
+            for(int i=0;i<targets.length;i++){
+                fireAndForgetQuery(query,targets[i].getIp(),targets[i].getPort());
+            }
+        }
     }
 
-    public RequestFileAck requestFile(Node self, Node target, String fileName, int hops){
-        return null;
+    public void responseFile(TransportAddress src,TransportAddress self,List<String> fileList,int hops,String fileName) throws IOException {
+        //length SEROK no_files IP port hops original filename1 filename2
+        String query = "SEROK "+fileList.size()+" "+self.getIp()+" "+self.getPort()+" "+hops+" \""+fileName+"\"";
+        for(int i=0;i<fileList.size();i++){
+            query+= " \""+fileList.get(i)+"\"";
+        }
+        int queryLength = query.length()+5;
+        query = String.format("%04d", queryLength) + " " + query;
+
+        fireAndForgetQuery(query,src.getIp(),src.getPort());
     }
 
-    public String sendQuery(String query,String ip, int port)throws SocketException,UnknownHostException,IOException{
+    public String sendAndReceiveQuery(String query,String ip, int port)throws SocketException,UnknownHostException,IOException{
         DatagramSocket clientSocket = new DatagramSocket();
         InetAddress IPAddress = InetAddress.getByName(ip);
         byte[] sendData = new byte[1024];
@@ -64,5 +83,14 @@ public class Communicator {
         clientSocket.receive(receivePacket);
         String newQuery =  new String(receivePacket.getData(), 0, receivePacket.getLength());
         return newQuery;
+    }
+
+    public void fireAndForgetQuery(String query,String ip, int port)throws SocketException,UnknownHostException,IOException{
+        DatagramSocket clientSocket = new DatagramSocket();
+        InetAddress IPAddress = InetAddress.getByName(ip);
+        byte[] sendData = new byte[1024];
+        sendData = query.getBytes();
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+        clientSocket.send(sendPacket);
     }
 }
