@@ -94,7 +94,7 @@ public class DebugServer implements Runnable{
             System.out.println(tempNQ);
 
             //Nodes will update
-            
+            Node test = new Node();
 
 
         }else if(stringList.contains("LATE")){
