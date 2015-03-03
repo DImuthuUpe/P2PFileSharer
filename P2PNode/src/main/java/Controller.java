@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class Controller {
 
-    private int offset = 5;
+    private int offset = 3;
     private Set<TransportAddress> ipTable = new HashSet<TransportAddress>();
     private Node myNode;
     private Communicator communicator;
