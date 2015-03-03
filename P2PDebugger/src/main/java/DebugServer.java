@@ -11,6 +11,9 @@ import java.util.List;
 
 public class DebugServer implements Runnable{
 
+    List<SuccessQuery> successQueryList = new ArrayList<SuccessQuery>();
+    List<NodeQuery> nodeQueryList = new ArrayList<NodeQuery>();
+
     @Override
     public void run() {
         try{
@@ -23,13 +26,18 @@ public class DebugServer implements Runnable{
                 serverSocket.receive(receivePacket);
                 byte data[] = receivePacket.getData();
                 String sentence = new String(data,0,receivePacket.getLength() );
-                //This is used to Decompose the input query in to relevant category. 
-                queyDecomposer(sentence);
-
-                System.out.println("RECEIVED: " + sentence);
+                System.out.println("");
+                System.out.println("########################################");
+                System.out.println("RECEIVED QUERY : " + sentence);
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
-                System.out.println("PORT: "+port);
+                System.out.println("RECEIVED PORT : "+port);
+                //This is used to Decompose the input query in to relevant category.
+                queyDecomposer(sentence);
+
+
+                System.out.println("########################################");
+
                 String capitalizedSentence = sentence.toUpperCase();
                 sendData = capitalizedSentence.getBytes();
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
@@ -63,17 +71,42 @@ public class DebugServer implements Runnable{
         String[] splittedStrings = queryString.trim().split(" ");
         List<String> stringList = Arrays.asList(splittedStrings);
 
-        if(stringList.contains("HOPS")){
-            System.out.println("Contains HOPS");
+        if(stringList.contains("INFO")){
+
+            System.out.println("Query TYPE : INFO");
+            NodeQuery tempNQ = new NodeQuery();
+            tempNQ.setSourceIP(splittedStrings[0]);
+            tempNQ.setSourcePort(Integer.parseInt(splittedStrings[1]));
+            tempNQ.setFileName(splittedStrings[3]);
+            tempNQ.setHops(Integer.parseInt(splittedStrings[4]));
+            tempNQ.setIP(splittedStrings[5]);
+            tempNQ.setPort(Integer.parseInt(splittedStrings[6]));
+            tempNQ.setFileAvaillable(Boolean.parseBoolean(splittedStrings[7]));
+            tempNQ.setNoOfForwardings(Integer.parseInt(splittedStrings[8]));
+
+            nodeQueryList.add(tempNQ);
+
+            System.out.println(tempNQ);
+
         }else if(stringList.contains("LATE")){
-            System.out.println("Contains LATE");
-        }else if(stringList.contains("MSGS")) {
-            System.out.println("Contains MSGS");
-        }else if(stringList.contains("DEGS")){
-            System.out.println("Contains DEGS");
+
+            System.out.println("Query TYPE : LATE");
+            SuccessQuery tempSQ = new SuccessQuery();
+            tempSQ.setSourceIP(splittedStrings[0]);
+            tempSQ.setSourcePort(Integer.parseInt(splittedStrings[1]));
+            tempSQ.setFileName(splittedStrings[3]);
+            tempSQ.setLatency(Double.parseDouble(splittedStrings[4]));
+            tempSQ.setHops(Integer.parseInt(splittedStrings[5]));
+
+            successQueryList.add(tempSQ);
+
+            System.out.println(tempSQ);
+
         }else{
+
             System.out.println("Not a Valid Query!");
             //Error Code Return
+
         }
 
     }
