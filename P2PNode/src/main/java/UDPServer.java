@@ -125,7 +125,7 @@ public class UDPServer implements Runnable{
 
                 TransportAddress src = new TransportAddress(parts[3],Integer.parseInt(parts[4]));
                 Communicator communicator = new Communicator();
-                communicator.publishResults(self,src,fileName,latency,hops,fileList);
+                communicator.publishResults(self,src,fileName,latency,Controller.MAX_HOPS-hops,fileList);
 
             }
 

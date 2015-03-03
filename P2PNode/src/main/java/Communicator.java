@@ -72,13 +72,14 @@ public class Communicator {
 
         System.out.println("File : "+fileName +" is in "+src.getIp()+":"+src.getPort());
         System.out.println("Latency "+latency);
+        System.out.println("Hopes "+hops);
         System.out.println("File List.....");
         for (int i=0;i<fileList.length;i++){
             System.out.println(fileList[i]);
         }
 
         if(debug){
-            String query = "LATE "+self.getIp()+" "+self.getPort()+" \""+fileName+"\" "+latency+hops;
+            String query = "LATE "+self.getIp()+" "+self.getPort()+" \""+fileName+"\" "+latency+" "+hops;
             fireAndForgetQuery(query,debugServer,debugPort);
         }
     }
