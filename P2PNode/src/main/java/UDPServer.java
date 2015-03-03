@@ -41,7 +41,6 @@ public class UDPServer implements Runnable{
                 serverSocket.receive(receivePacket);
                 byte data[] = receivePacket.getData();
                 String query = new String(data,0,receivePacket.getLength() );
-                //System.out.println("RECEIVED: " + query);
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
                 Message returnMessage = parseMessage(query);
@@ -77,16 +76,19 @@ public class UDPServer implements Runnable{
             JoinAck ack = new JoinAck();
             ack.setCode(0);
             return ack;
-        }else if(parts[1].equals("SER")){
+        }else if(parts[1].equals("SER")){ //at search query
             //System.out.println(message);
+
             String filename = parts[6];
             List<String> matchingWords = controller.getMatchingWords(filename);
             TransportAddress src = new TransportAddress(parts[2],Integer.parseInt(parts[3]));
             int hops = Integer.parseInt(parts[parts.length-1]);
+
             if(matchingWords.size()>0){ //if there are matching words
                 //System.out.println("File found");
                 Communicator communicator = new Communicator();
                 communicator.responseFile(src,self,matchingWords,hops,filename);
+
             }else{
                 //length SER src_ip src_port pred_ip pred_port file_name hops
                 String predIp = parts[4];
@@ -102,14 +104,16 @@ public class UDPServer implements Runnable{
                         forwardingNodes.add(tp);
                     }
                 }
+
                 TransportAddress[] targets = new TransportAddress[forwardingNodes.size()];
                 targets = forwardingNodes.toArray(targets);
                 Communicator communicator = new Communicator();
                 communicator.requestFile(self,src,targets,filename,hops);
             }
-        }else if(parts[1].equals("SEROK")){
+        }else if(parts[1].equals("SEROK")){ //at search ok query
             //0049 SEROK 1 127.0.0.1 3002 hops original "file1_2"
             //System.out.println(message);
+
             String fileName = parts[6];
             if(controller.searchTable.containsKey(fileName)){
                 Long currentTime = System.currentTimeMillis();
@@ -122,6 +126,7 @@ public class UDPServer implements Runnable{
                     System.out.println(parts[i]);
                 }
             }
+
         }
         return null;
     }

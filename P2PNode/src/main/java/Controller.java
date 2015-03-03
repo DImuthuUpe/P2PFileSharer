@@ -76,7 +76,7 @@ public class Controller {
             String searchQuery="file1_2";
             Long currentTime = System.currentTimeMillis();
             searchTable.put(searchQuery,currentTime);
-            communicator.requestFile(self,self,targets,"\""+searchQuery+"\"",2);
+            communicator.requestFile(self,self,targets,searchQuery,2);
 
         }catch (Exception ex){
             ex.printStackTrace();

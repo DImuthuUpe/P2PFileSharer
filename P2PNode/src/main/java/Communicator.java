@@ -11,6 +11,10 @@ public class Communicator {
 
     private String bsServer= "127.0.0.1";
     private int bsPort = 5000;
+    private String debugServer = "127.0.0.1";
+    private int debugPort=6000;
+
+    private boolean debug=true;
 
     public BSAck register(Node self) throws SocketException,UnknownHostException,IOException{
 
@@ -49,13 +53,18 @@ public class Communicator {
         //length SER src_ip src_port pred_ip pred_port file_name hops
         hops --;
         if(hops>=0){
-            String query = "SER "+src.getIp()+" "+src.getPort()+" "+self.getIp()+" "+self.getPort()+" "+fileName+" "+hops;
+            String query = "SER "+src.getIp()+" "+src.getPort()+" "+self.getIp()+" "+self.getPort()+" \""+fileName+"\" "+hops;
             int queryLength = query.length()+5;
             query = String.format("%04d", queryLength) + " " + query;
 
             for(int i=0;i<targets.length;i++){
                 fireAndForgetQuery(query,targets[i].getIp(),targets[i].getPort());
             }
+        }
+
+        if(debug){
+            String query = "INFO "+src.getIp()+" "+src.getPort()+" \""+fileName+"\" "+hops+" "+self.getIp()+" "+self.getPort()+" false "+targets.length;
+            fireAndForgetQuery(query,debugServer,debugPort);
         }
     }
 
@@ -69,6 +78,11 @@ public class Communicator {
         query = String.format("%04d", queryLength) + " " + query;
 
         fireAndForgetQuery(query,src.getIp(),src.getPort());
+
+        if(debug){
+            query = "INFO "+src.getIp()+" "+src.getPort()+" \""+fileName+"\" "+hops+" "+self.getIp()+" "+self.getPort()+" true 0";
+            fireAndForgetQuery(query,debugServer,debugPort);
+        }
     }
 
     public String sendAndReceiveQuery(String query,String ip, int port)throws SocketException,UnknownHostException,IOException{
