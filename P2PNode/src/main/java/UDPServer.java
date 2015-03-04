@@ -18,14 +18,10 @@ import java.util.regex.Pattern;
 public class UDPServer implements Runnable{
     private Controller controller;
     private TransportAddress self;
-    private InetAddress address;
-    private int port;
 
-    public UDPServer(Controller controller,InetAddress address, int port){
+    public UDPServer(Controller controller,String address, int port){
         this.controller = controller;
-        this.address = address;
-        this.port = port;
-        this.self = new TransportAddress(address.getHostAddress(),port);
+        this.self = new TransportAddress(address,port);
     }
 
 
@@ -86,8 +82,8 @@ public class UDPServer implements Runnable{
 
             if(matchingWords.size()>0){ //if there are matching words
                 //System.out.println("File found");
-                Communicator communicator = new Communicator();
-                communicator.responseFile(src,self,matchingWords,hops,filename);
+                UDPClient client = new UDPClient();
+                client.responseFile(src,self,matchingWords,hops,filename);
 
             }else{
                 //length SER src_ip src_port pred_ip pred_port file_name hops
@@ -107,8 +103,8 @@ public class UDPServer implements Runnable{
 
                 TransportAddress[] targets = new TransportAddress[forwardingNodes.size()];
                 targets = forwardingNodes.toArray(targets);
-                Communicator communicator = new Communicator();
-                communicator.requestFile(self,src,targets,filename,hops);
+                UDPClient client = new UDPClient();
+                client.requestFile(self,src,targets,filename,hops);
             }
         }else if(parts[1].equals("SEROK")){ //at search ok query
             //0049 SEROK 1 127.0.0.1 3002 hops original "file1_2"
@@ -124,8 +120,8 @@ public class UDPServer implements Runnable{
                 int hops = Integer.parseInt(parts[5]);
 
                 TransportAddress src = new TransportAddress(parts[3],Integer.parseInt(parts[4]));
-                Communicator communicator = new Communicator();
-                communicator.publishResults(self,src,fileName,latency,Controller.MAX_HOPS-hops,fileList);
+                UDPClient client = new UDPClient();
+                client.publishResults(self,src,fileName,latency,Controller.MAX_HOPS-hops,fileList);
 
             }
 
@@ -135,12 +131,12 @@ public class UDPServer implements Runnable{
 
     public DatagramSocket openSocket(){
         try{
-            DatagramSocket serverSocket = new DatagramSocket(port, address);
-            System.out.println("Socket created ....... ip "+address.getHostName()+" port "+port);
+            DatagramSocket serverSocket = new DatagramSocket(self.getPort(), InetAddress.getByName(self.getIp()));
+            System.out.println("Socket created ....... ip "+self.getIp()+" port "+self.getPort());
             return serverSocket;
-        }catch (SocketException ex){
+        }catch (IOException ex){
             ex.printStackTrace();
-            System.out.println("Unable to open socket on port "+port);
+            System.out.println("Unable to open socket on port "+self.getPort());
             System.exit(0);
         }
         return null;

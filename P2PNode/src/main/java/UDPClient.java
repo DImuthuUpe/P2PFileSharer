@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by dimuthuupeksha on 3/2/15.
  */
-public class Communicator {
+public class UDPClient {
 
     private String bsServer= "127.0.0.1";
     private int bsPort = 5000;

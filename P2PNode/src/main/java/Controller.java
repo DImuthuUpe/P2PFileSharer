@@ -3,8 +3,8 @@ import beans.JoinAck;
 import beans.Node;
 import beans.TransportAddress;
 
+import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 
 /**
@@ -12,10 +12,10 @@ import java.util.*;
  */
 public class Controller {
 
-    private int offset = 4;
+    private int offset = 5;
     private Set<TransportAddress> ipTable = new HashSet<TransportAddress>();
     private Node myNode;
-    private Communicator communicator;
+    private UDPClient client;
     private String[] fileList={"file1_"+offset,"file1_"+offset+" hoo","file2_"+offset,"file3_"+offset,};
     Map<String,Long> searchTable = new HashMap<String, Long>();
     public static final int MAX_HOPS = 2;
@@ -44,8 +44,13 @@ public class Controller {
         }
     }
 
-    public static void main(String args[]){
-        new Controller();
+    public void searchFile(String searchQuery) throws IOException {
+        TransportAddress self = new TransportAddress(myNode.getIp(),myNode.getPort());
+        TransportAddress targets[] = new TransportAddress[ipTable.size()];
+        targets = ipTable.toArray(targets);
+        Long currentTime = System.currentTimeMillis();
+        searchTable.put(searchQuery,currentTime);
+        client.requestFile(self,self,targets,searchQuery,MAX_HOPS);
     }
 
     public Controller(){
@@ -55,33 +60,28 @@ public class Controller {
         }
         System.out.println();
 
-        communicator = new Communicator();
+        client = new UDPClient();
         myNode = new Node("127.0.0.1",3000+offset,"User "+offset);
         try{
-            Thread server = new Thread(new UDPServer(this, InetAddress.getByName("localhost"),myNode.getPort()));
+            Thread server = new Thread(new UDPServer(this, myNode.getIp(),myNode.getPort()));
             server.start();
 
-            BSAck ack = communicator.register(myNode);
+            BSAck ack = client.register(myNode);
             addToIpTable(ack.getNodes());
 
             for(int i=0;i<ack.getNodes().length;i++){ // sending join requests to nodes
-                JoinAck joinAck =communicator.join(myNode, ack.getNodes()[i]);
-                //System.out.println(joinAck.convertToQuery());
+                JoinAck joinAck =client.join(myNode, ack.getNodes()[i]);
             }
 
-            TransportAddress self = new TransportAddress(myNode.getIp(),myNode.getPort());
-            TransportAddress targets[] = new TransportAddress[ipTable.size()];
-            targets = ipTable.toArray(targets);
-
-            String searchQuery="file1_2";
-            Long currentTime = System.currentTimeMillis();
-            searchTable.put(searchQuery,currentTime);
-            communicator.requestFile(self,self,targets,searchQuery,MAX_HOPS);
-
+            searchFile("file1_2");
         }catch (Exception ex){
             ex.printStackTrace();
             System.exit(0);
         }
 
+    }
+
+    public static void main(String args[]){
+        new Controller();
     }
 }
