@@ -1,7 +1,11 @@
+package udp;
+
 import beans.JoinAck;
 import beans.Message;
 import beans.Node;
 import beans.TransportAddress;
+import p2p.Controller;
+import udp.UDPClient;
 
 import java.io.IOException;
 import java.net.*;
@@ -121,7 +125,7 @@ public class UDPServer implements Runnable{
 
                 TransportAddress src = new TransportAddress(parts[3],Integer.parseInt(parts[4]));
                 UDPClient client = new UDPClient();
-                client.publishResults(self,src,fileName,latency,Controller.MAX_HOPS-hops,fileList);
+                client.publishResults(self,src,fileName,latency, Controller.MAX_HOPS-hops,fileList);
 
             }
 

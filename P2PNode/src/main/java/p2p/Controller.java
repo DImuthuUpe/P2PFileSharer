@@ -1,10 +1,13 @@
+package p2p;
+
 import beans.BSAck;
 import beans.JoinAck;
 import beans.Node;
 import beans.TransportAddress;
+import udp.UDPClient;
+import udp.UDPServer;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.*;
 
 /**
@@ -12,12 +15,12 @@ import java.util.*;
  */
 public class Controller {
 
-    private int offset = 5;
+    private int offset = 6;
     private Set<TransportAddress> ipTable = new HashSet<TransportAddress>();
     private Node myNode;
     private UDPClient client;
     private String[] fileList={"file1_"+offset,"file1_"+offset+" hoo","file2_"+offset,"file3_"+offset,};
-    Map<String,Long> searchTable = new HashMap<String, Long>();
+    public Map<String,Long> searchTable = new HashMap<String, Long>();
     public static final int MAX_HOPS = 2;
 
     public Set<TransportAddress> getIpTable() {
