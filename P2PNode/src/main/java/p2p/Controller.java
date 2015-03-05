@@ -27,7 +27,7 @@ public class Controller {
         return ipTable;
     }
 
-    public String[] getMatchingWords(String word){
+    public List<String> getMatchingWords(String word){
         String splitRegex = "[\\s:_]";
 
         String[] splitedStr = word.split(splitRegex);
@@ -55,7 +55,7 @@ public class Controller {
             }
         }
 
-        return matchedFiles.toArray(new String[matchedFiles.size()]);
+        return matchedFiles;
     }
 
 
