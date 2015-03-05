@@ -43,8 +43,16 @@ public class UDPClient {
         return ack;
     }
 
-    public UnRegisterAck unRegister(Node self){
-        return null;
+    public UnRegisterAck unRegister(Node self) throws IOException {
+        String query = "UNREG "+self.getIp()+" "+self.getPort()+" "+self.getUserName();
+        int queryLength = query.length()+5;
+        query = String.format("%04d", queryLength) + " " + query;
+
+        String newQuery = sendAndReceiveQuery(query, bsServer, bsPort);
+        UnRegisterAck ack = new UnRegisterAck();
+        ack.initialize(newQuery);
+
+        return ack;
     }
 
     public LeaveAck leave(Node self, Node remote) throws IOException {
