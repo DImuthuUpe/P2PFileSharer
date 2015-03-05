@@ -8,18 +8,29 @@
 
 <h5>Sample node output</h5>
 
-ile List .........
+File List .........
+
 Happy Feet
+
 Jack and Jill
+
 The Vampire Diarie
+
 ..................
 
+
 Socket created ....... ip 127.0.0.1 port 3000
+
 Added node 127.0.0.1 3001
+
 Added node 127.0.0.1 3002
+
 Added node 127.0.0.1 3004
+
 Added node 127.0.0.1 3005
+
 Added node 127.0.0.1 3006
+
 Added node 127.0.0.1 3010
 
 <h3>Console queries</h3>
