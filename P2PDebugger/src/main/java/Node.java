@@ -2,7 +2,6 @@
  * Created by Chamika on 3/4/2015.
  */
 public class Node {
-
     private String IP;
     private int PORT;
     private int messagesReceived;
@@ -11,19 +10,22 @@ public class Node {
     private int nodeDegree;
     private double nodeCost;
 
-
     public Node() {
         nodeDegree = 0;
+        messagesReceived = 0;
+        messagesForwarded = 0;
+        nodeDegree = 0;
+        nodeCost = 0;
     }
 
-    public Node(String IP, int PORT, int messagesReceived, int messagesForwarded, int messagesAnswered, int nodeDegree, double nodeCost) {
+    public Node(String IP, int PORT) {
         this.IP = IP;
         this.PORT = PORT;
-        this.messagesReceived = messagesReceived;
-        this.messagesForwarded = messagesForwarded;
-        this.messagesAnswered = messagesAnswered;
-        this.nodeDegree = nodeDegree;
-        this.nodeCost = nodeCost;
+        nodeDegree = 0;
+        messagesReceived = 0;
+        messagesForwarded = 0;
+        nodeDegree = 0;
+        nodeCost = 0;
     }
 
     public String getIP() {
@@ -90,5 +92,41 @@ public class Node {
         if(nodeDegree > 0){
             nodeDegree -= 1;
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        if (!this.IP.equals(other.IP)) {
+            return false;
+        }
+        if (this.PORT != other.PORT) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode(){
+        return (new String(this.IP + ":" + this.PORT)).hashCode();
+    }
+
+    @Override
+    public String toString() {
+//        private String IP;
+//        private int PORT;
+//        private int messagesReceived;
+//        private int messagesForwarded;
+//        private int messagesAnswered;
+//        private int nodeDegree;
+//        private double nodeCost;
+        return "IP : "+IP+" PORT : "+PORT+" Messages Received : "+messagesReceived+" Messages Forwarded : "+messagesForwarded
+                +" Messages Answered : "+messagesAnswered+" Node Degree : "+nodeDegree+" Node Cost : "+nodeCost;
     }
 }
