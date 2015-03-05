@@ -47,8 +47,15 @@ public class UDPClient {
         return null;
     }
 
-    public LeaveAck leave(Node self, Node remote){
-        return null;
+    public LeaveAck leave(Node self, Node remote) throws IOException {
+        String query = "JOIN "+ self.getIp()+" "+self.getPort();
+        int queryLength = query.length()+5;
+        query = String.format("%04d", queryLength) + " " + query;
+
+        String newQuery = sendAndReceiveQuery(query, remote.getIp(), remote.getPort());
+        LeaveAck ack = new LeaveAck();
+        ack.initialize(newQuery);
+        return ack;
     }
 
     public void requestFile(TransportAddress self,TransportAddress src, TransportAddress[] targets, String fileName, int hops) throws IOException {
