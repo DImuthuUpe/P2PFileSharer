@@ -4,6 +4,7 @@ import beans.JoinAck;
 import beans.Message;
 import beans.Node;
 import beans.TransportAddress;
+import beans.LeaveAck;
 import p2p.Controller;
 import udp.UDPClient;
 
@@ -129,6 +130,12 @@ public class UDPServer implements Runnable{
 
             }
 
+        }else if(parts[1].equals("LEAVE")){
+            Node node = new Node(parts[2],Integer.parseInt(parts[3]),null);
+            controller.removeFromIpTable(node);
+            LeaveAck ack = new LeaveAck();
+            ack.setCode(0);
+            return ack;
         }
         return null;
     }

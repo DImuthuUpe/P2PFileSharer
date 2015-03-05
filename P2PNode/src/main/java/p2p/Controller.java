@@ -68,6 +68,12 @@ public class Controller {
         }
     }
 
+    public void removeFromIpTable(Node node){
+        TransportAddress tpAddress = new TransportAddress(node.getIp(),node.getPort());
+        ipTable.remove(tpAddress);
+        System.out.println("Removed Node "+tpAddress.getIp()+ " "+tpAddress.getPort());
+    }
+
     public void searchFile(String searchQuery) throws IOException {
         TransportAddress self = new TransportAddress(myNode.getIp(),myNode.getPort());
         TransportAddress targets[] = new TransportAddress[ipTable.size()];
