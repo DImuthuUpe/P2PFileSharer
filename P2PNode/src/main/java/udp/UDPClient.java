@@ -55,7 +55,7 @@ public class UDPClient {
         return ack;
     }
 
-    public LeaveAck leave(Node self, Node remote) throws IOException {
+    public LeaveAck leave(TransportAddress self, TransportAddress remote) throws IOException {
         String query = "LEAVE "+ self.getIp()+" "+self.getPort();
         int queryLength = query.length()+5;
         query = String.format("%04d", queryLength) + " " + query;

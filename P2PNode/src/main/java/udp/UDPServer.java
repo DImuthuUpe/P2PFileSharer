@@ -23,10 +23,12 @@ import java.util.regex.Pattern;
 public class UDPServer implements Runnable{
     private Controller controller;
     private TransportAddress self;
+    private String userName;
 
-    public UDPServer(Controller controller,String address, int port){
+    public UDPServer(Controller controller,String address, int port,String userName){
         this.controller = controller;
         this.self = new TransportAddress(address,port);
+        this.userName = userName;
     }
 
 
@@ -133,9 +135,29 @@ public class UDPServer implements Runnable{
         }else if(parts[1].equals("LEAVE")){
             Node node = new Node(parts[2],Integer.parseInt(parts[3]),null);
             controller.removeFromIpTable(node);
+            System.out.println("Node "+node.getIp()+" "+node.getPort()+ " left network");
             LeaveAck ack = new LeaveAck();
             ack.setCode(0);
             return ack;
+        }else if(parts[1].equals("CONSOLE")){ //
+            //length CONSOLE LEAVE
+            if(parts[2].equals("LEAVE")){
+                System.out.println("Leaving the network");
+                UDPClient client = new UDPClient();
+                client.unRegister(new Node(self.getIp(),self.getPort(),userName));
+                System.out.println("Un-registered from BS");
+                Iterator<TransportAddress> it = controller.getIpTable().iterator();
+
+                while(it.hasNext()){
+                    TransportAddress node = it.next();
+                    System.out.println("Leaving node "+node.getIp()+" "+node.getPort());
+                    client.leave(self,node);
+                }
+                System.exit(0);
+            }else if(parts[2].equals("SEARCH")){
+                System.out.println("Searching for file : "+parts[3]);
+                controller.searchFile(parts[3]);
+            }
         }
         return null;
     }

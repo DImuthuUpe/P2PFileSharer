@@ -7,3 +7,4 @@ P2PNode/target/*
 P2PDebugger/.idea/*
 P2PDebugger/target/*
 P2PDebugger/P2PDebug.iml
+logs/*

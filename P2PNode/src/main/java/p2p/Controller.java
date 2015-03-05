@@ -7,7 +7,9 @@ import beans.TransportAddress;
 import udp.UDPClient;
 import udp.UDPServer;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -19,9 +21,27 @@ public class Controller {
     private Set<TransportAddress> ipTable = new HashSet<TransportAddress>();
     private Node myNode;
     private UDPClient client;
-    private String[] fileList={"file1_"+offset,"file1_"+offset+" hoo","file2_"+offset,"file3_"+offset,};
+    private String[] fileList;
     public Map<String,Long> searchTable = new HashMap<String, Long>();
     public static final int MAX_HOPS = 2;
+
+    public void initiateFileList(){
+        InputStream is= getClass().getResourceAsStream("/FileNames.txt");
+        Scanner sc = new Scanner(is);
+        List<String> files = new ArrayList<String>();
+        while(sc.hasNext()){
+            files.add(sc.nextLine());
+        }
+        Random random = new Random();
+        int fileCount = 5-random.nextInt(3);
+
+        fileList = new String[fileCount];
+        for(int i=0;i<fileCount;i++){
+            int index = random.nextInt(files.size());
+            fileList[i] = files.get(index);
+            files.remove(index);
+        }
+    }
 
     public Set<TransportAddress> getIpTable() {
         return ipTable;
@@ -83,17 +103,18 @@ public class Controller {
         client.requestFile(self,self,targets,searchQuery,MAX_HOPS);
     }
 
-    public Controller(){
-        System.out.println("File List");
+    public Controller(String ip,int port,String username){
+        initiateFileList();
+        System.out.println("File List .........");
         for (int i=0;i<fileList.length;i++){
             System.out.println(fileList[i]);
         }
-        System.out.println();
+        System.out.println("..................\n");
 
         client = new UDPClient();
-        myNode = new Node("127.0.0.1",3000+offset,"User "+offset);
+        myNode = new Node(ip,port,username);
         try{
-            Thread server = new Thread(new UDPServer(this, myNode.getIp(),myNode.getPort()));
+            Thread server = new Thread(new UDPServer(this, myNode.getIp(),myNode.getPort(),username));
             server.start();
 
             BSAck ack = client.register(myNode);
@@ -102,8 +123,6 @@ public class Controller {
             for(int i=0;i<ack.getNodes().length;i++){ // sending join requests to nodes
                 JoinAck joinAck =client.join(myNode, ack.getNodes()[i]);
             }
-
-            searchFile("file1_2");
         }catch (Exception ex){
             ex.printStackTrace();
             System.exit(0);
@@ -112,6 +131,29 @@ public class Controller {
     }
 
     public static void main(String args[]){
-        new Controller();
+        int port=0;
+        String ip=null;
+        String user=null;
+        if(args!=null){
+            for(int i=0;i<args.length;i++){
+                if(args[i].equals("-p")){
+                    port = Integer.parseInt(args[i+1]);
+                    i++;
+                }else if(args[i].equals("-u")){
+                    user = args[i+1];
+                    i++;
+                }else if(args[i].equals("-h")){
+                    ip = args[i+1];
+                    i++;
+                }
+            }
+        }
+
+        if(port==0||ip==null||user==null){
+            System.out.println("Can not initiate node. Input parameters are invalid");
+            System.exit(0);
+        }else{
+            new Controller(ip,port,user);
+        }
     }
 }
