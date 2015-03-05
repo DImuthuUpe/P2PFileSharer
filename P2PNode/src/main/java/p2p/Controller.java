@@ -27,14 +27,35 @@ public class Controller {
         return ipTable;
     }
 
-    public List<String> getMatchingWords(String word){
-        List<String> matchingWords = new ArrayList<String>();
-        for(int i=0;i<fileList.length;i++){
-            if(fileList[i].contains(word)){
-                matchingWords.add(fileList[i]);
+    public String[] getMatchingWords(String word){
+        String splitRegex = "[\\s:_]";
+
+        String[] splitedStr = word.split(splitRegex);
+        ArrayList<String> splitWords;
+        ArrayList<String> matchedFiles = new ArrayList<String>();
+
+        for (int j = 0; j < fileList.length; j++) {
+            splitWords = new ArrayList<String>(Arrays.asList(fileList[j].split(splitRegex)));
+
+            boolean matched = true;
+
+            for (int i=0; i<splitedStr.length; i++){
+                int index = splitWords.indexOf(splitedStr[i]);
+                if (index == -1){
+                    matched = false;
+                    break;
+                }
+                else{
+                    splitWords.remove(index);
+                }
+
+            }
+            if(matched){
+                matchedFiles.add(fileList[j]);
             }
         }
-        return matchingWords;
+
+        return matchedFiles.toArray(new String[matchedFiles.size()]);
     }
 
 
