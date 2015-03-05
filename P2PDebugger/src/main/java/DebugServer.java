@@ -168,6 +168,26 @@ public class DebugServer implements Runnable{
         }else if(stringList.contains("STAT")){
             //Show statistics
 
+            //Hopes Statistics
+            int minHopes = getMinHopes();
+            int maxHopes = getMaxHopes();
+            double averageHopes = getAverageHopes();
+
+            //Latency Statistics
+            double minLatency = getMinLatency();
+            double maxLatency = getMaxLatency();
+            double averageLatency = getAverageLatency();
+
+            //Messages per node Statistics
+            int minMessagesPerNode = getMinMessagesPerNode();
+            int maxMessagesPerNode = getMaxMessagesPerNode();
+            double averageMessagesPerNode = getAverageMessagesPerNode();
+
+            //Node degree Statistics
+            int minNodeDegree = getMinNodeDegree();
+            int maxNodeDegree = getMaxNodeDegree();
+            double averageNodeDegree = getAverageNodeDegree();
+
         }else{
 
             System.out.println("Not a Valid Query!");
@@ -188,6 +208,9 @@ public class DebugServer implements Runnable{
 
     }
 
+    /**
+     * This method is used to save the Success Queries on a File.
+     */
     public void saveSuccessQueries(){
         try {
             System.out.println("File Write for Success Queries is Started!");
@@ -223,6 +246,9 @@ public class DebugServer implements Runnable{
         }
     }
 
+    /**
+     * This method is used to save all the Query details on a File.
+     */
     public void saveQueryDetails(){
         try {
             System.out.println("File Write for Node Queries is Started!");
@@ -264,6 +290,9 @@ public class DebugServer implements Runnable{
         }
     }
 
+    /**
+     * This method is used to store all the details about the Nodes in a File.
+     */
     public void saveNodeDetails(){
         try {
             System.out.println("File Write for Node Details is Started!");
@@ -305,6 +334,169 @@ public class DebugServer implements Runnable{
             e.printStackTrace();
         }
     }
+
+    public int getMinHopes(){
+        int minHopes = Integer.MAX_VALUE;
+
+        for(SuccessQuery sq : successQueryList){
+            int tempHops = sq.getHops();
+            if(tempHops<minHopes){
+                minHopes = tempHops;
+            }
+        }
+
+        return minHopes;
+    }
+
+    public int getMaxHopes(){
+        int maxHopes = Integer.MIN_VALUE;
+
+        for(SuccessQuery sq : successQueryList){
+            int tempHops = sq.getHops();
+            if(tempHops>maxHopes){
+                maxHopes = tempHops;
+            }
+        }
+        return maxHopes;
+
+    }
+
+    public double getAverageHopes(){
+        double averageHopes = 0.0;
+
+        for(SuccessQuery sq : successQueryList){
+            int tempHops = sq.getHops();
+            averageHopes =+tempHops;
+        }
+
+        return averageHopes/successQueryList.size();
+    }
+
+    public double getMinLatency(){
+        double minLatency = Integer.MAX_VALUE;
+
+        for(SuccessQuery sq : successQueryList){
+            double tempLatency = sq.getLatency();
+            if(tempLatency<minLatency){
+                minLatency = tempLatency;
+            }
+        }
+
+        return minLatency;
+    }
+
+    public double getMaxLatency(){
+        double maxLatency = Integer.MIN_VALUE;
+
+        for(SuccessQuery sq : successQueryList){
+            double tempLatency = sq.getLatency();
+            if(tempLatency>maxLatency){
+                maxLatency = tempLatency;
+            }
+        }
+
+        return maxLatency;
+    }
+
+    public double getAverageLatency(){
+        double averageLatency = 0.0;
+
+        for(SuccessQuery sq : successQueryList){
+            int tempLatency = sq.getHops();
+            averageLatency =+tempLatency;
+        }
+
+        return averageLatency/successQueryList.size();
+    }
+
+    public int getMinMessagesPerNode(){
+        int minMessagesPerNode = Integer.MAX_VALUE;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys) {
+            Node temp = nodeTable.get(key);
+            int totalMessages = temp.getMessagesForwarded()+temp.getMessagesReceived();
+            if(totalMessages<minMessagesPerNode){
+                    minMessagesPerNode = totalMessages;
+            }
+        }
+
+        return minMessagesPerNode;
+
+    }
+
+    public int getMaxMessagesPerNode(){
+        int maxMessagesPerNode = Integer.MIN_VALUE;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys) {
+            Node temp = nodeTable.get(key);
+            int totalMessages = temp.getMessagesForwarded()+temp.getMessagesReceived();
+            if(totalMessages>maxMessagesPerNode){
+                maxMessagesPerNode = totalMessages;
+            }
+        }
+
+        return maxMessagesPerNode;
+    }
+
+    public double getAverageMessagesPerNode(){
+
+        double averageMessagesPerNode = 0.0;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys) {
+            Node temp = nodeTable.get(key);
+            averageMessagesPerNode += temp.getMessagesForwarded()+temp.getMessagesReceived();
+        }
+
+        return averageMessagesPerNode/nodeTable.size();
+
+    }
+
+    public int getMinNodeDegree(){
+        int minNodeDegree = Integer.MAX_VALUE;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys) {
+            Node temp = nodeTable.get(key);
+            int tempNodeDegree = temp.getNodeDegree();
+            if(tempNodeDegree<minNodeDegree){
+                minNodeDegree = tempNodeDegree;
+            }
+        }
+
+        return minNodeDegree;
+    }
+
+    public int getMaxNodeDegree(){
+        int maxNodeDegree = Integer.MIN_VALUE;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys) {
+            Node temp = nodeTable.get(key);
+            int tempNodeDegree = temp.getNodeDegree();
+            if(tempNodeDegree>maxNodeDegree){
+                maxNodeDegree = tempNodeDegree;
+            }
+        }
+
+        return maxNodeDegree;
+    }
+
+    public double getAverageNodeDegree(){
+        double averageNodeDegree = 0.0;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys) {
+            Node temp = nodeTable.get(key);
+            averageNodeDegree += temp.getNodeDegree();
+        }
+
+        return averageNodeDegree/nodeTable.size();
+    }
+
+
 
 
 }
