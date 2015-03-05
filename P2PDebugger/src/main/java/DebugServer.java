@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 public class DebugServer implements Runnable{
 
+    private static int version = 1;
     List<SuccessQuery> successQueryList = new ArrayList<SuccessQuery>();
     List<NodeQuery> nodeQueryList = new ArrayList<NodeQuery>();
     Hashtable<String, Node> nodeTable = new Hashtable<String, Node>();
@@ -187,6 +188,70 @@ public class DebugServer implements Runnable{
             int minNodeDegree = getMinNodeDegree();
             int maxNodeDegree = getMaxNodeDegree();
             double averageNodeDegree = getAverageNodeDegree();
+
+            try {
+                System.out.println("File Write for Statistics is Started!");
+                File file = new File("./src/Files/Statistics.txt");
+                // if file doesnt exists, then create it
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+
+                bw.write("VERSION : "+version);
+                version++;
+
+                bw.newLine();
+                bw.write("Min Hopes : "+minHopes);
+                bw.newLine();
+                bw.write("Max Hopes : "+maxHopes);
+                bw.newLine();
+                bw.write("Average Hopes : "+averageHopes);
+                bw.newLine();
+                bw.write("Standard Deviation of Hopes : ");
+                bw.newLine();
+
+                bw.newLine();
+                bw.write("Min Latency : "+minLatency);
+                bw.newLine();
+                bw.write("Max Latency : "+maxLatency);
+                bw.newLine();
+                bw.write("Average Latency : "+averageLatency);
+                bw.newLine();
+                bw.write("Standard Deviation of Latency : ");
+                bw.newLine();
+
+                bw.newLine();
+                bw.write("Min Messages per Node : "+minMessagesPerNode);
+                bw.newLine();
+                bw.write("Max Messages per Node : "+maxMessagesPerNode);
+                bw.newLine();
+                bw.write("Average Messages per Node : "+averageMessagesPerNode);
+                bw.newLine();
+                bw.write("Standard Deviation of Messages per Node : ");
+                bw.newLine();
+
+                bw.newLine();
+                bw.write("Min Node Degree : "+minNodeDegree);
+                bw.newLine();
+                bw.write("Max Node Degree : "+maxNodeDegree);
+                bw.newLine();
+                bw.write("Average Node Degree : "+averageNodeDegree);
+                bw.newLine();
+                bw.write("Standard Deviation of Node Degree : ");
+                bw.newLine();
+
+                bw.write("##########################################");
+
+                bw.close();
+
+                System.out.println("File Write for Statistics is Done!");
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }else{
 
@@ -495,6 +560,9 @@ public class DebugServer implements Runnable{
 
         return averageNodeDegree/nodeTable.size();
     }
+
+
+
 
 
 
