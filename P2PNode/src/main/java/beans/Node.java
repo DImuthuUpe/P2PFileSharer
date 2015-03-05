@@ -1,8 +1,5 @@
 package beans;
 
-/**
- * Created by dimuthuupeksha on 3/2/15.
- */
 public class Node {
     private String ip;
     private int port;

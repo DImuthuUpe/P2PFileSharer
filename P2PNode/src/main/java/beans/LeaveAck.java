@@ -1,8 +1,5 @@
 package beans;
 
-/**
- * Created by dimuthuupeksha on 3/2/15.
- */
 public class LeaveAck implements Message{
     private int code;
 

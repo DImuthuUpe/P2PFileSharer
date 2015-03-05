@@ -1,8 +1,5 @@
 package beans;
 
-/**
- * Created by dimuthuupeksha on 3/3/15.
- */
 public class TransportAddress {
     private String ip;
     private int port;

@@ -7,14 +7,11 @@ import beans.TransportAddress;
 import udp.UDPClient;
 import udp.UDPServer;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-/**
- * Created by dimuthuupeksha on 3/2/15.
- */
+
 public class Controller {
 
     private int offset = 6;

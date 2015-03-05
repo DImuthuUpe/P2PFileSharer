@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.net.*;
 import java.util.List;
 
-/**
- * Created by dimuthuupeksha on 3/2/15.
- */
 public class UDPClient {
 
     private String bsServer= "127.0.0.1";

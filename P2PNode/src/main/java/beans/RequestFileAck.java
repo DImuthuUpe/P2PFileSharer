@@ -1,8 +1,5 @@
 package beans;
 
-/**
- * Created by dimuthuupeksha on 3/2/15.
- */
 public class RequestFileAck implements Message{
     private int fileCount;
     private String ip;

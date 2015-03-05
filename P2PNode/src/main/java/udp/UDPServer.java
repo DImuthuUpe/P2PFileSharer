@@ -17,9 +17,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created by dimuthuupeksha on 3/2/15.
- */
 public class UDPServer implements Runnable{
     private Controller controller;
     private TransportAddress self;
