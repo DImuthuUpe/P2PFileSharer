@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.Runnable;
 import java.net.*;
 import java.util.*;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -173,21 +174,25 @@ public class DebugServer implements Runnable{
             int minHopes = getMinHopes();
             int maxHopes = getMaxHopes();
             double averageHopes = getAverageHopes();
+            double standardDeviationHopes = getStandardDeviationHopes(averageHopes);
 
             //Latency Statistics
             double minLatency = getMinLatency();
             double maxLatency = getMaxLatency();
             double averageLatency = getAverageLatency();
+            double standardDeviationLatency = getStandardDeviationLatency(averageLatency);
 
             //Messages per node Statistics
             int minMessagesPerNode = getMinMessagesPerNode();
             int maxMessagesPerNode = getMaxMessagesPerNode();
             double averageMessagesPerNode = getAverageMessagesPerNode();
+            double standardDeviationMessagesPerNode = getStandardDeviationMessagesPerNode(averageMessagesPerNode);
 
             //Node degree Statistics
             int minNodeDegree = getMinNodeDegree();
             int maxNodeDegree = getMaxNodeDegree();
             double averageNodeDegree = getAverageNodeDegree();
+            double standardDeviationNodeDegree = getStandardDeviationNodeDegree(averageNodeDegree);
 
             try {
                 System.out.println("File Write for Statistics is Started!");
@@ -210,7 +215,7 @@ public class DebugServer implements Runnable{
                 bw.newLine();
                 bw.write("Average Hopes : "+averageHopes);
                 bw.newLine();
-                bw.write("Standard Deviation of Hopes : ");
+                bw.write("Standard Deviation of Hopes : " + standardDeviationHopes);
                 bw.newLine();
 
                 bw.newLine();
@@ -220,7 +225,7 @@ public class DebugServer implements Runnable{
                 bw.newLine();
                 bw.write("Average Latency : "+averageLatency);
                 bw.newLine();
-                bw.write("Standard Deviation of Latency : ");
+                bw.write("Standard Deviation of Latency : " +standardDeviationLatency);
                 bw.newLine();
 
                 bw.newLine();
@@ -230,7 +235,7 @@ public class DebugServer implements Runnable{
                 bw.newLine();
                 bw.write("Average Messages per Node : "+averageMessagesPerNode);
                 bw.newLine();
-                bw.write("Standard Deviation of Messages per Node : ");
+                bw.write("Standard Deviation of Messages per Node : "+standardDeviationMessagesPerNode);
                 bw.newLine();
 
                 bw.newLine();
@@ -240,7 +245,7 @@ public class DebugServer implements Runnable{
                 bw.newLine();
                 bw.write("Average Node Degree : "+averageNodeDegree);
                 bw.newLine();
-                bw.write("Standard Deviation of Node Degree : ");
+                bw.write("Standard Deviation of Node Degree : "+standardDeviationNodeDegree);
                 bw.newLine();
 
                 bw.write("##########################################");
@@ -437,6 +442,16 @@ public class DebugServer implements Runnable{
         return averageHopes/successQueryList.size();
     }
 
+    public double getStandardDeviationHopes(double mean){
+        double averageHopes = 0.0;
+
+        for(SuccessQuery sq : successQueryList){
+            averageHopes =+Math.pow((sq.getHops() - mean),2);
+        }
+
+        return Math.sqrt(averageHopes/successQueryList.size());
+    }
+
     public double getMinLatency(){
         double minLatency = Integer.MAX_VALUE;
 
@@ -467,11 +482,21 @@ public class DebugServer implements Runnable{
         double averageLatency = 0.0;
 
         for(SuccessQuery sq : successQueryList){
-            int tempLatency = sq.getHops();
+            double tempLatency = sq.getLatency();
             averageLatency =+tempLatency;
         }
 
         return averageLatency/successQueryList.size();
+    }
+
+    public double getStandardDeviationLatency(double mean){
+        double averageLatency = 0.0;
+
+        for(SuccessQuery sq : successQueryList){
+            averageLatency =+Math.pow((sq.getLatency() - mean),2);
+        }
+
+        return Math.sqrt(averageLatency/successQueryList.size());
     }
 
     public int getMinMessagesPerNode(){
@@ -519,6 +544,18 @@ public class DebugServer implements Runnable{
 
     }
 
+    public double getStandardDeviationMessagesPerNode(double mean){
+        double averageMessagesPerNode = 0.0;
+
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys){
+            Node temp = nodeTable.get(key);
+            averageMessagesPerNode =+Math.pow((temp.getMessagesForwarded()+temp.getMessagesReceived() - mean),2);
+        }
+
+        return Math.sqrt(averageMessagesPerNode/nodeTable.size());
+    }
+
     public int getMinNodeDegree(){
         int minNodeDegree = Integer.MAX_VALUE;
 
@@ -561,7 +598,16 @@ public class DebugServer implements Runnable{
         return averageNodeDegree/nodeTable.size();
     }
 
+    public double getStandardDeviationNodeDegree(double mean){
+        double averageNodeDegree = 0.0;
 
+        Set<String> keys = nodeTable.keySet();
+        for(String key : keys){
+            averageNodeDegree =+Math.pow((nodeTable.get(key).getNodeDegree() - mean),2);
+        }
+
+        return Math.sqrt(averageNodeDegree/nodeTable.size());
+    }
 
 
 
