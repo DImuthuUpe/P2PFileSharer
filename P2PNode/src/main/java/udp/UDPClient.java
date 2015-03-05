@@ -48,7 +48,7 @@ public class UDPClient {
     }
 
     public LeaveAck leave(Node self, Node remote) throws IOException {
-        String query = "JOIN "+ self.getIp()+" "+self.getPort();
+        String query = "LEAVE "+ self.getIp()+" "+self.getPort();
         int queryLength = query.length()+5;
         query = String.format("%04d", queryLength) + " " + query;
 
