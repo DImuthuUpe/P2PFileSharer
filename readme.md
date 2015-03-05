@@ -1,43 +1,32 @@
+Building project
+----------------
 
-<h3>To setup a sample netwok</h3>
+* Go to BootStrapServer
 
-* Start BS server
+* mvn clean install
+
+* Go to P2PNode
+
+* mvn clean install
+
+
+To setup a sample netwok
+------------------------
+
+* Start BS server using ./startup-bs.sh
 * Start sample nodes  using ./startup.sh
 
-<h3>All log files for each node can be found in logs folder</h3>
 
-<h5>Sample node output</h5>
+All log files for each node can be found in logs folder
 
-File List .........
-
-Happy Feet
-
-Jack and Jill
-
-The Vampire Diarie
-
-..................
-
-
-Socket created ....... ip 127.0.0.1 port 3000
-
-Added node 127.0.0.1 3001
-
-Added node 127.0.0.1 3002
-
-Added node 127.0.0.1 3004
-
-Added node 127.0.0.1 3005
-
-Added node 127.0.0.1 3006
-
-Added node 127.0.0.1 3010
-
-<h3>Console queries</h3>
+Console queries
+---------------
 
 * To search file 
-echo "22 CONSOLE SEARCH <file name>"|nc -u <ip> <port>
+
+echo "22 CONSOLE SEARCH <file name>" | nc -u <ip> <port>
 
 * To leave the network
-echo "22 CONSOLE LEAVE"|nc -u <ip> <port>
+
+echo "22 CONSOLE LEAVE" | nc -u <ip> <port>
 
