@@ -6,6 +6,7 @@ import beans.Node;
 import beans.TransportAddress;
 import beans.LeaveAck;
 import p2p.Controller;
+import rpc.node;
 import udp.UDPClient;
 
 import java.io.IOException;
@@ -16,6 +17,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 
 public class UDPServer implements Runnable{
     private Controller controller;
@@ -154,6 +161,30 @@ public class UDPServer implements Runnable{
             }else if(parts[2].equals("SEARCH")){
                 System.out.println("Searching for file : "+parts[3]);
                 controller.searchFile(parts[3]);
+            }else if(parts[2].equals("SEARCHRPC")){
+            	Set<TransportAddress> ipTable = controller.getIpTable();
+            	Iterator<TransportAddress> it = ipTable.iterator();
+            	while (it.hasNext()){
+                    TransportAddress tp = it.next();
+                    
+                    	try {
+          			      TTransport transport;
+          			     
+          			      transport = new TSocket(tp.getIp(), tp.getPort());
+          			      System.out.println(tp.getIp()+ " " + tp.getPort());
+          			      transport.open();
+
+          			      TProtocol protocol = new  TBinaryProtocol(transport);
+          			      node.Client client = new node.Client(protocol);
+
+          			      client.search(self.getIp(), self.getPort(), parts[3], Controller.MAX_HOPS);
+
+          			      transport.close();
+          			    } catch (TException x) {
+          			      x.printStackTrace();
+          			    }  
+                    
+                }
             }
         }
         return null;

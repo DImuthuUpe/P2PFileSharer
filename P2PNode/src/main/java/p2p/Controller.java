@@ -1,5 +1,7 @@
 package p2p;
 
+import rpc.Handler;
+import rpc.node;
 import beans.BSAck;
 import beans.JoinAck;
 import beans.Node;
@@ -11,6 +13,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.thrift.server.TServer;
+import org.apache.thrift.server.TSimpleServer;
+import org.apache.thrift.server.TServer.Args;
+import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TServerTransport;
+
+
 
 public class Controller {
 
@@ -21,6 +30,9 @@ public class Controller {
     private String[] fileList;
     public Map<String,Long> searchTable = new HashMap<String, Long>();
     public static final int MAX_HOPS = 2;
+    public static Handler handler;
+	public static int port;
+	public static node.Processor<node.Iface> processor;
 
     public void initiateFileList(){
         InputStream is= getClass().getResourceAsStream("/FileNames.txt");
@@ -128,7 +140,7 @@ public class Controller {
     }
 
     public static void main(String args[]){
-        int port=0;
+        
         String ip=null;
         String user=null;
         if(args!=null){
@@ -150,7 +162,34 @@ public class Controller {
             System.out.println("Can not initiate node. Input parameters are invalid");
             System.exit(0);
         }else{
-            new Controller(ip,port,user);
+            Controller con = new Controller(ip,port,user);
+            try {
+        	      handler = new Handler(con,ip,port);
+        	      processor = new node.Processor<node.Iface>(handler);
+
+        	      Runnable simple = new Runnable() {
+        	        public void run() {
+        	          simple(processor);
+        	        }
+        	      };      
+        	     
+        	      new Thread(simple).start();
+        	    } catch (Exception x) {
+        	      x.printStackTrace();
+        	    }
         }
+        
     }
+    
+    public static void simple(node.Processor<node.Iface> processor) {
+	    try {
+	      TServerTransport serverTransport = new TServerSocket(port);
+	      TServer server = new TSimpleServer(new Args(serverTransport).processor(processor));
+
+	      System.out.println("Starting the simple Thrift server...");
+	      server.serve();
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	  }
 }
