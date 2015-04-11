@@ -11,7 +11,7 @@ public class P2PRegistry {
 	
     public P2PRegistry(){
         try{
-            serverSocket = openSocket(5000);
+            serverSocket = openSocket(Integer.parseInt(ConfigManager.getProperty(ConfigManager.PORT)));
             receiveData = new byte[1024];
             sendData = new byte[1024];
         }catch(Exception ex){
@@ -33,7 +33,8 @@ public class P2PRegistry {
 				serverSocket.receive(receivePacket);
 				byte data[] = receivePacket.getData();
 				inputData = new String(data, 0, receivePacket.getLength());
-				inputInfo = inputData.split(" ");
+                //System.out.println(inputData);
+                inputInfo = inputData.split(" ");
 				try {
 					if (inputInfo[1].equals("REG")) {
 						output = server.registerNode(inputInfo[2],
@@ -61,7 +62,7 @@ public class P2PRegistry {
     
     public DatagramSocket openSocket(int portNo){
         try{
-            DatagramSocket serverSocket = new DatagramSocket(portNo,InetAddress.getByName("localhost"));
+            DatagramSocket serverSocket = new DatagramSocket(portNo,InetAddress.getByName(ConfigManager.getProperty(ConfigManager.SERVER_IP)));
             System.out.println("Socket created .......");
             return serverSocket;
         }catch (UnknownHostException ex){

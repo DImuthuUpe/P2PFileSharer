@@ -1,6 +1,7 @@
 package udp;
 
 import beans.*;
+import util.ConfigManager;
 
 import java.io.IOException;
 import java.net.*;
@@ -8,12 +9,19 @@ import java.util.List;
 
 public class UDPClient {
 
-    private String bsServer= "127.0.0.1";
-    private int bsPort = 5000;
-    private String debugServer = "127.0.0.1";
-    private int debugPort=6000;
+    private String bsServer;
+    private int bsPort;
+    private String debugServer;
+    private int debugPort;
 
     private boolean debug=true;
+
+    public UDPClient(){
+        bsServer = ConfigManager.getProperty(ConfigManager.BS_SERVER_IP);
+        bsPort = Integer.parseInt(ConfigManager.getProperty(ConfigManager.BS_PORT));
+        debugServer = ConfigManager.getProperty(ConfigManager.DS_SERVER_IP);
+        debugPort = Integer.parseInt(ConfigManager.getProperty(ConfigManager.DS_PORT));
+    }
 
     public BSAck register(Node self) throws SocketException,UnknownHostException,IOException{
 
@@ -123,9 +131,12 @@ public class UDPClient {
         sendData = query.getBytes();
         DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
         clientSocket.send(sendPacket);
+        //System.out.println("sent");
         DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
         clientSocket.receive(receivePacket);
+        //System.out.println("received");
         String newQuery =  new String(receivePacket.getData(), 0, receivePacket.getLength());
+        //System.out.println(newQuery);
         return newQuery;
     }
 
