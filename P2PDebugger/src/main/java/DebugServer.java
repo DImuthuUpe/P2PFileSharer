@@ -23,7 +23,7 @@ public class DebugServer implements Runnable{
     @Override
     public void run() {
         try{
-            DatagramSocket serverSocket = openSocket(6000);
+            DatagramSocket serverSocket = openSocket(Integer.parseInt(ConfigManager.getProperty(ConfigManager.PORT)));
             byte[] receiveData = new byte[1024];
             byte[] sendData = new byte[1024];
             while(true)
@@ -61,7 +61,8 @@ public class DebugServer implements Runnable{
      */
     public DatagramSocket openSocket(int portNo){
         try{
-            DatagramSocket serverSocket = new DatagramSocket(portNo, InetAddress.getByName("localhost"));
+            DatagramSocket serverSocket = new DatagramSocket(portNo, InetAddress.getByName(ConfigManager.getProperty(ConfigManager.SERVER_IP)));
+            System.out.println("Server ip : "+ConfigManager.getProperty(ConfigManager.SERVER_IP));
             System.out.println("Socket Created .......");
             return serverSocket;
         }catch (UnknownHostException ex){
@@ -196,7 +197,7 @@ public class DebugServer implements Runnable{
 
             try {
                 System.out.println("File Write for Statistics is Started!");
-                File file = new File("./src/Files/Statistics.txt");
+                File file = new File("Statistics.txt");
                 // if file doesnt exists, then create it
                 if (!file.exists()) {
                     file.createNewFile();
@@ -284,7 +285,7 @@ public class DebugServer implements Runnable{
     public void saveSuccessQueries(){
         try {
             System.out.println("File Write for Success Queries is Started!");
-            File file = new File("./src/Files/SuccessQueries.txt");
+            File file = new File("SuccessQueries.txt");
             // if file doesnt exists, then create it
             if (!file.exists()) {
                 file.createNewFile();
@@ -322,7 +323,7 @@ public class DebugServer implements Runnable{
     public void saveQueryDetails(){
         try {
             System.out.println("File Write for Node Queries is Started!");
-            File file = new File("./src/Files/NodeQueries.txt");
+            File file = new File("NodeQueries.txt");
             // if file doesnt exists, then create it
             if (!file.exists()) {
                 file.createNewFile();
@@ -366,7 +367,7 @@ public class DebugServer implements Runnable{
     public void saveNodeDetails(){
         try {
             System.out.println("File Write for Node Details is Started!");
-            File file = new File("./src/Files/NodeDetails.txt");
+            File file = new File("NodeDetails.txt");
             // if file doesnt exists, then create it
             if (!file.exists()) {
                 file.createNewFile();
