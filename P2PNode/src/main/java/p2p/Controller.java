@@ -29,7 +29,7 @@ public class Controller {
     private UDPClient client;
     private String[] fileList;
     public Map<String,Long> searchTable = new HashMap<String, Long>();
-    public static final int MAX_HOPS = 2;
+    public static final int MAX_HOPS = 3;
     public static Handler handler;
 	public static int port;
 	public static node.Processor<node.Iface> processor;
