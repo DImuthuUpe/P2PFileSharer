@@ -437,7 +437,7 @@ public class DebugServer implements Runnable{
 
         for(SuccessQuery sq : successQueryList){
             int tempHops = sq.getHops();
-            averageHopes =+tempHops;
+            averageHopes +=tempHops;
         }
 
         return averageHopes/successQueryList.size();
@@ -447,7 +447,7 @@ public class DebugServer implements Runnable{
         double averageHopes = 0.0;
 
         for(SuccessQuery sq : successQueryList){
-            averageHopes =+Math.pow((sq.getHops() - mean),2);
+            averageHopes +=Math.pow((sq.getHops() - mean),2);
         }
 
         return Math.sqrt(averageHopes/successQueryList.size());
@@ -484,7 +484,7 @@ public class DebugServer implements Runnable{
 
         for(SuccessQuery sq : successQueryList){
             double tempLatency = sq.getLatency();
-            averageLatency =+tempLatency;
+            averageLatency +=tempLatency;
         }
 
         return averageLatency/successQueryList.size();
@@ -494,7 +494,7 @@ public class DebugServer implements Runnable{
         double averageLatency = 0.0;
 
         for(SuccessQuery sq : successQueryList){
-            averageLatency =+Math.pow((sq.getLatency() - mean),2);
+            averageLatency +=Math.pow((sq.getLatency() - mean),2);
         }
 
         return Math.sqrt(averageLatency/successQueryList.size());
@@ -551,7 +551,7 @@ public class DebugServer implements Runnable{
         Set<String> keys = nodeTable.keySet();
         for(String key : keys){
             Node temp = nodeTable.get(key);
-            averageMessagesPerNode =+Math.pow((temp.getMessagesForwarded()+temp.getMessagesReceived() - mean),2);
+            averageMessagesPerNode +=Math.pow((temp.getMessagesForwarded()+temp.getMessagesReceived() - mean),2);
         }
 
         return Math.sqrt(averageMessagesPerNode/nodeTable.size());
@@ -604,7 +604,7 @@ public class DebugServer implements Runnable{
 
         Set<String> keys = nodeTable.keySet();
         for(String key : keys){
-            averageNodeDegree =+Math.pow((nodeTable.get(key).getNodeDegree() - mean),2);
+            averageNodeDegree +=Math.pow((nodeTable.get(key).getNodeDegree() - mean),2);
         }
 
         return Math.sqrt(averageNodeDegree/nodeTable.size());
